@@ -1,0 +1,56 @@
+[
+   {
+      "id":"20",
+      "name":"Lemon Juice",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/lemon.jpeg?alt=media&token=fa92a440-a114-4ab7-bfce-98c875ee2d2e",
+      "description":"One-of-a-kind semi circle pizza for your personal pizza cravings!Meaty goodness that will leave your craving for more.",
+      "info":"90 ml",
+      "hasNonVeg":false,
+      "type":"drinks",
+      "subTypes":[
+         "Soft",
+         "Sugar free"
+      ],
+      "amount":5
+   },
+   {
+      "id":"21",
+      "name":"Plain Mojito",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/mojito.jpeg?alt=media&token=351a475c-28d6-4063-a574-d152122044d6",
+      "description":"One-of-a-kind semi circle pizza for your personal pizza cravings!Meaty goodness that will leave your craving for more.",
+      "info":"90 ml",
+      "hasNonVeg":false,
+      "type":"drinks",
+      "subTypes":[
+         "Soft"
+      ],
+      "amount":10
+   },
+   {
+      "id":"22",
+      "name":"promogran Juice",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/promo.jpeg?alt=media&token=4cac4be7-7248-49fc-b4eb-941b6aa37f00",
+      "description":"<font color=\"red\">One-of-a-kind semi circle pizza</font> for your personal pizza cravings!Meaty goodness that will leave your craving for more.",
+      "info":"30 ml",
+      "hasNonVeg":false,
+      "type":"drinks",
+      "subTypes":[
+         "Soft"
+      ],
+      "amount":55
+   },
+   {
+      "id":"23",
+      "name":"Virgin Mary",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/virign_mary.jpeg?alt=media&token=83e3e44a-75bc-4bfa-8309-c34a3431a601",
+      "description":"One-of-a-kind semi circle pizza for your personal pizza <font color=\"red\">cravings!</font>Meaty goodness that will leave your craving for more.",
+      "info":"40 ml",
+      "hasNonVeg":false,
+      "type":"drinks",
+      "subTypes":[
+         "Soft"
+      ],
+      "amount":30
+   }
+]
+

@@ -1,0 +1,68 @@
+[
+   {
+      "id":"1",
+      "name":"Chicken Meatball and Onion",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/Chicago.jpeg?alt=media&token=c690d09d-5bb7-4758-8511-5deaabbcda39",
+      "description":"One-of-a-kind semi circle pizza for your personal pizza cravings!Meaty goodness that will leave your craving for more.",
+      "info":"150 gms, 35 cm",
+      "hasNonVeg":true,
+      "type":"pizza",
+      "subTypes":[
+         "Spicy"
+      ],
+      "amount":40
+   },
+   {
+      "id":"2",
+      "name":"Very Veggie semizza",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/Detroit.jpeg?alt=media&token=0505e190-22b7-4af2-aba8-53d7b4bf4eec",
+      "description":"One-of-a-kind semi circle pizza for your personal pizza cravings!Meaty goodness that will leave your craving for more.",
+      "info":"200 gms, 20 cm",
+      "hasNonVeg":false,
+      "type":"pizza",
+      "subTypes":[
+         "vegan"
+      ],
+      "amount":30
+   },
+   {
+      "id":"3",
+      "name":"Chicken Tikka and Oninon Semizza",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/Narezushi.jpeg?alt=media&token=189b88c4-9511-4021-8e01-895eabfd3cc6",
+      "description":"One-of-a-kind semi circle pizza for your personal pizza cravings!Meaty goodness that will leave your craving for more.",
+      "info":"240 gms, 40 cm",
+      "hasNonVeg":true,
+      "type":"pizza",
+      "subTypes":[
+         "Spicy"
+      ],
+      "amount":55
+   },
+   {
+      "id":"4",
+      "name":"Napoli Veggies Semizza",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/Neapolitan.jpeg?alt=media&token=2a76b912-5b48-47f1-a08c-0b6e394be28c",
+      "description":"One-of-a-kind semi circle pizza for your personal pizza cravings!Meaty goodness that will leave your craving for more.",
+      "info":"300 gms, 40 cm",
+      "hasNonVeg":false,
+      "type":"pizza",
+      "subTypes":[
+         "Spicy",
+         "Vegan"
+      ],
+      "amount":55
+   },
+   {
+      "id":"5",
+      "name":"Mutton Overload Pizza",
+      "imageUrl":"https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/New%20York-Style.jpeg?alt=media&token=66df228f-67c7-4bfc-bdd8-10d1c9fe5dee",
+      "description":"One-of-a-kind semi circle pizza for your personal pizza cravings!Meaty goodness that will leave your craving for more.",
+      "info":"300 gms, 40 cm",
+      "hasNonVeg":false,
+      "type":"pizza",
+      "subTypes":[
+         "Spicy"
+      ],
+      "amount":55
+   }
+]
