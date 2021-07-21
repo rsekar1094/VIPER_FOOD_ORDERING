@@ -59,14 +59,22 @@ class FoodListViewController : BaseViewController<FoodListPresenter> {
 extension FoodListViewController : FoodListDelegate {
     
     func didSelect(food : Food) {
-        
+        print("didSelect \(food.id)")
     }
     
     func addToCart(food : Food) {
-        
+        print("addToCart \(food.id)")
     }
     
     func didFoodListScrolled() {
         self.delegate?.didChildScrollViewScrolled(self.foodView)
+    }
+    
+    func didFoodListEndDragging(willDecelerate : Bool) {
+        self.delegate?.didChildScrollViewEndDragging(self.foodView, willDecelerate: willDecelerate)
+    }
+    
+    func didFoodListEndDecelerate() {
+        self.delegate?.didChildScrollViewEndDecelerate(self.foodView)
     }
 }

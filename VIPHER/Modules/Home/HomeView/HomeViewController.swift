@@ -134,8 +134,8 @@ extension HomeViewController : BannerDelegate {
     }
 }
 
-// MARK: - ParentPageControlProtocol
-extension HomeViewController : UIScrollViewDelegate,ParentPageControlProtocol {
+// MARK: - UIScrollViewDelegate
+extension HomeViewController : UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         ///If user scroll beyond the banner then set the state as hidden
@@ -157,6 +157,10 @@ extension HomeViewController : UIScrollViewDelegate,ParentPageControlProtocol {
         }
     }
     
+}
+// MARK: - ParentPageControlProtocol
+extension HomeViewController : ParentPageControlProtocol {
+
     func assignCurrentChildScrollView(_ scrollView : UIScrollView) {
         self.childScrollView = scrollView
         configureBannerState()
@@ -172,6 +176,14 @@ extension HomeViewController : UIScrollViewDelegate,ParentPageControlProtocol {
             translation.y > 0 {
             scrollView.isScrollEnabled = false
         }
+    }
+    
+    func didChildScrollViewEndDragging(_ scrollView : UIScrollView,willDecelerate : Bool) {
+        
+    }
+    
+    func didChildScrollViewEndDecelerate(_ scrollView : UIScrollView) {
+       
     }
 }
 

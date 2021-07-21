@@ -11,7 +11,10 @@ import HMSegmentedControl
 // MARK: - ParentPageControlProtocol
 protocol ParentPageControlProtocol : AnyObject {
     func assignCurrentChildScrollView(_ scrollView : UIScrollView)
+    
     func didChildScrollViewScrolled(_ scrollView : UIScrollView)
+    func didChildScrollViewEndDragging(_ scrollView : UIScrollView,willDecelerate : Bool)
+    func didChildScrollViewEndDecelerate(_ scrollView : UIScrollView)
 }
 
 // MARK: - ChildPageChange

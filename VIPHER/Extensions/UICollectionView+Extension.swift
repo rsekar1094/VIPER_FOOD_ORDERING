@@ -28,3 +28,11 @@ extension UICollectionView {
         return cell
     }
 }
+
+extension UICollectionView {
+    func indexPath(for view: UIView) -> IndexPath? {
+        let viewCenterRelativeToTableview = self.convert(CGPoint.init(x: view.bounds.midX,
+                                                                      y: view.bounds.midY), from:view)
+        return self.indexPathForItem(at: viewCenterRelativeToTableview)
+    }
+}

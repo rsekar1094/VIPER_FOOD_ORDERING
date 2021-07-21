@@ -12,7 +12,10 @@ import UIKit
 protocol FoodListDelegate : AnyObject {
     func didSelect(food : Food)
     func addToCart(food : Food)
+    
     func didFoodListScrolled()
+    func didFoodListEndDragging(willDecelerate : Bool)
+    func didFoodListEndDecelerate()
 }
 
 // MARK: - FoodListView
@@ -50,6 +53,15 @@ class FoodListView : UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    @objc
+    private func didPressAction(_ button : UIButton) {
+        guard let indexPath = self.indexPath(for: button) else {
+            return
+        }
+        
+        print("didPressAction \(indexPath.item)")
+    }
 }
 
 // MARK: - DataSource + Delegate
@@ -61,6 +73,7 @@ extension FoodListView : UICollectionViewDelegate,UICollectionViewDataSource,UIC
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeue(FoodRowView.self, for: indexPath)
         cell.food = items[indexPath.item]
+        cell.actionButton.addTarget(self, action: #selector(FoodListView.didPressAction(_:)), for: .touchUpInside)
         return cell
     }
     
@@ -77,5 +90,13 @@ extension FoodListView : UICollectionViewDelegate,UICollectionViewDataSource,UIC
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.foodDelegate?.didFoodListScrolled()
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        self.foodDelegate?.didFoodListEndDecelerate()
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        self.foodDelegate?.didFoodListEndDragging(willDecelerate: decelerate)
     }
 }

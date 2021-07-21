@@ -73,11 +73,10 @@ class FoodRowView : UICollectionViewCell {
         return label
     }()
     
-    private var actionButton : AddToCartButton = {
+    internal var actionButton : AddToCartButton = {
         let actionButton = AddToCartButton()
         actionButton.isUserInteractionEnabled = true
         actionButton.translatesAutoresizingMaskIntoConstraints = false
-        actionButton.addTarget(self, action: #selector(didPressActionButton), for: .touchUpInside)
         return actionButton
     }()
     
@@ -127,39 +126,11 @@ class FoodRowView : UICollectionViewCell {
         }
     }
     
-    /*override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-
-        guard isUserInteractionEnabled else { return nil }
-
-        guard !isHidden else { return nil }
-
-        guard alpha >= 0.01 else { return nil }
-
-        guard self.point(inside: point, with: event) else { return nil }
-
-
-        // add one of these blocks for each button in our collection view cell we want to actually work
-        if self.actionButton.point(inside: convert(point, to: actionButton), with: event) {
-            //didPressActionButton()
-        }
-
-        return super.hitTest(point, with: event)
-    }*/
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         
         self.food = nil
     }
-    
-    
-    // MARK: - Action methods
-    @objc
-    private func didPressActionButton() {
-        self.actionButton.update(itemPrice: food?.amount ?? 0, totalCount: 1)
-        self.actionButton.showInfo()
-    }
-    
 }
 
 // MARK: - FoodRowView + Utils
@@ -206,7 +177,8 @@ extension FoodRowView {
     }
     
     private func setUp() {
-        self.contentView.isUserInteractionEnabled = false
+        self.contentView.isUserInteractionEnabled = true
+        self.isUserInteractionEnabled = true
         
         self.contentView.backgroundColor = .cardColor
         self.contentView.addSubview(imageView)
