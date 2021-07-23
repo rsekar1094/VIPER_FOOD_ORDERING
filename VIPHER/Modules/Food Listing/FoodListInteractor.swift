@@ -25,6 +25,7 @@ final class FoodListInteractor : Interactorable {
     private var foodItems : [Food] = []
     
     private let foodType : FoodType
+    private var currentFilterType : String?
     
     // MARK: - Initialziers
     init(foodType : FoodType) {
@@ -62,7 +63,7 @@ final class FoodListInteractor : Interactorable {
         } else {
             items = foodItems
         }
-        
+        self.currentFilterType = filter
         self.publishablefoodList.accept(.success(items))
     }
     
@@ -74,8 +75,8 @@ final class FoodListInteractor : Interactorable {
             case let .success(response):
                 do {
                     let data = try Mapper<Food>().mapArray(JSONString : JsonHandler.jsonStringFromData(response.data))
-                    self.publishablefoodList.accept(.success(data))
                     self.foodItems = data
+                    self.filterFoods(with : self.currentFilterType)
                 } catch let error {
                     self.publishablefoodList.accept(.failure(error))
                 }
