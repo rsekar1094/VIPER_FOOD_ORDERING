@@ -21,6 +21,8 @@ Food products ordering app using **VIPHER** architecture with following framewor
 
 <br/>
 <br/>
-[Portrait Video](https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/portrait.mov?alt=media&token=45d1c3ef-4fe7-40a8-88c6-6984bd151ec5).<br/>
-[Landscape Video](https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/landscape.mov?alt=media&token=ed42b244-6a15-4262-b378-a777aa2ec94f)
+
+[Portrait Video](https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/portrait.mov?alt=media&token=45d1c3ef-4fe7-40a8-88c6-6984bd151ec5) 
+<br/>
+[Landscape Video](https://firebasestorage.googleapis.com/v0/b/ios-demo-6a625.appspot.com/o/landscape.mov?alt=media&token=ed42b244-6a15-4262-b378-a777aa2ec94f) 
 
