@@ -131,6 +131,11 @@ class FoodRowView : UICollectionViewCell {
         
         self.food = nil
     }
+    
+    func addedInToCart(totalItemInCart : Int) {
+        actionButton.update(itemPrice: food?.amount ?? 0, totalCount: totalItemInCart)
+        actionButton.showInfo()
+    }
 }
 
 // MARK: - FoodRowView + Utils
@@ -227,16 +232,20 @@ class AddToCartButton  : UIButton {
             configure()
         }
     }
+    private let backgroundLayer : CAGradientLayer
     
     // MARK: - Initializers
     override init(frame: CGRect) {
+        backgroundLayer = CAGradientLayer()
         super.init(frame: frame)
-        
+        self.layer.addSublayer(backgroundLayer)
         setUp()
     }
     
     required init?(coder: NSCoder) {
+        backgroundLayer = CAGradientLayer()
         super.init(coder: coder)
+        self.layer.addSublayer(backgroundLayer)
         setUp()
     }
     
@@ -245,6 +254,8 @@ class AddToCartButton  : UIButton {
         super.layoutSubviews()
         
         self.layer.cornerRadius = self.frame.size.height / 2
+        self.backgroundLayer.frame = self.bounds
+        backgroundLayer.cornerRadius = self.frame.size.height / 2
     }
     
     // MARK: - Configuration
@@ -267,15 +278,21 @@ class AddToCartButton  : UIButton {
         self.titleLabel?.font = UIFont.systemFont(ofSize: 16,weight: .medium)
         self.setTitleColor(.white, for: .normal)
         configure()
+        self.backgroundColor = .clear
+        
+        backgroundLayer.colors = [UIColor.theme.cgColor,UIColor.theme.cgColor]
+        backgroundLayer.locations = [1,1] as [NSNumber]
+        backgroundLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
+        backgroundLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
     }
     
     private func configure() {
         if isInfoVisible {
             self.setTitle("added +\(cartCountOfCurrentItem)", for: .normal)
-            self.backgroundColor = .init(hexString: "#5eb64d")
+            self.updateBackgroundColor(from: UIColor.theme, to: UIColor.init(hexString: "#5eb64d"), fromLeft: true)
             
             stateChangeTimer?.invalidate()
-            stateChangeTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false, block: { [weak self] timer in
+            stateChangeTimer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: false, block: { [weak self] timer in
                 guard let `self` = self else {
                     timer.invalidate()
                     return
@@ -284,9 +301,38 @@ class AddToCartButton  : UIButton {
                 timer.invalidate()
             })
         } else {
-            self.backgroundColor = UIColor.theme
+            self.updateBackgroundColor(from: UIColor.init(hexString: "#5eb64d"), to: .theme, fromLeft: false)
             self.setTitle("\(itemPrice) usd", for: .normal)
             stateChangeTimer?.invalidate()
         }
+    }
+    
+    private func updateBackgroundColor(from : UIColor,to : UIColor,fromLeft : Bool) {
+        let startLocations = fromLeft ? [0, 0] : [1,2]
+        let endLocations = fromLeft ? [1, 2] : [0,0]
+        
+        CATransaction.begin()
+        CATransaction.setCompletionBlock({
+            self.backgroundLayer.locations = [1,1]
+            self.backgroundLayer.colors = [to.cgColor,to.cgColor]
+        })
+        
+        let animationGroup = CAAnimationGroup()
+        
+        let colorAnimation = CABasicAnimation(keyPath: #keyPath(CAGradientLayer.colors))
+        colorAnimation.fromValue = from.cgColor
+        colorAnimation.toValue = to.cgColor
+        colorAnimation.duration = 0.2
+        
+        let locationAnimation = CABasicAnimation(keyPath: #keyPath(CAGradientLayer.locations))
+        locationAnimation.fromValue = startLocations
+        locationAnimation.toValue = endLocations
+        locationAnimation.duration = 0.2
+        
+        animationGroup.animations = [colorAnimation,locationAnimation]
+        
+        backgroundLayer.removeAllAnimations()
+        backgroundLayer.add(animationGroup, forKey: "loc")
+        CATransaction.commit()
     }
 }

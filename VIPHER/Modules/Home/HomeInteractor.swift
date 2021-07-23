@@ -20,8 +20,10 @@ final class HomeInteractor : Interactorable {
     let isHomeDataWaitingForResponse : Observable<Bool>
     private var publishableisHomeDataWaitingForResponse : PublishRelay<Bool>
     
-    private let disposeBag = DisposeBag()
+    let cartItems : Observable<Result<[CartItem],Error>>
+    private var publishableisCartResponse : PublishRelay<Result<[CartItem],Error>>
     
+    private let disposeBag = DisposeBag()    
     
     // MARK: - Initializers
     init() {
@@ -30,6 +32,13 @@ final class HomeInteractor : Interactorable {
         
         publishableisHomeDataWaitingForResponse = PublishRelay<Bool>()
         isHomeDataWaitingForResponse = publishableisHomeDataWaitingForResponse.asObservable()
+        
+        publishableisCartResponse = PublishRelay<Result<[CartItem],Error>>()
+        cartItems = publishableisCartResponse.asObservable()
+        
+        CartDataSource.shared.cartResponse.subscribe(onNext: { cartResponse in
+            self.publishableisCartResponse.accept(cartResponse)
+        }).disposed(by: self.disposeBag)
     }
     
     
@@ -53,6 +62,10 @@ final class HomeInteractor : Interactorable {
             self.publishableisHomeDataWaitingForResponse.accept(false)
             
         }.disposed(by: disposeBag)
+    }
+    
+    public func getCartItems() {
+        self.publishableisCartResponse.accept(.success(CartDataSource.shared.items))
     }
     
 }

@@ -30,6 +30,7 @@ class BannerView : UIView {
         view.isPagingEnabled = true
         view.showsHorizontalScrollIndicator = false
         view.register(BannerRowView.self)
+        view.contentInsetAdjustmentBehavior = .never
         return view
     }()
     
@@ -89,6 +90,14 @@ class BannerView : UIView {
         if currentPage != pageControl.currentPage {
             pageControl.currentPage = currentPage
         }
+    }
+    
+    public func invalidateLayout() {
+        self.collectionView.collectionViewLayout.invalidateLayout()
+    }
+    
+    public func reloadData() {
+        self.collectionView.reloadData()
     }
 }
 

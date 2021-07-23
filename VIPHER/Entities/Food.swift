@@ -9,19 +9,24 @@ import Foundation
 import ObjectMapper
 
 // MARK: - Food
-struct Food {
-    let id : String
+struct Food : Hashable {
+    fileprivate(set) var id : String
     
-    let name : String
-    let description : String
-    let info : String
-    let imageUrl : URL
+    fileprivate(set) var name : String
+    fileprivate(set) var description : String
+    fileprivate(set) var info : String
+    fileprivate(set) var imageUrl : URL
     
-    let hasNonVeg : Bool
-    let type : String
-    let subTypes : [String]
+    fileprivate(set) var hasNonVeg : Bool
+    fileprivate(set) var type : String
+    fileprivate(set) var subTypes : [String]
     
-    let amount : Int ///in usd
+    fileprivate(set) var amount : Int ///in usd
+    
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 // MARK: - Food + ObjectMapper
@@ -38,5 +43,49 @@ extension Food: ImmutableMappable {
         
         let imageUrl : String = try map.value("imageUrl")
         self.imageUrl = URL(string: imageUrl)!
+    }
+    
+    mutating func mapping(map: Map) {
+        self.id <- map["id"]
+        self.name <- map["name"]
+        self.description <- map["description"]
+        self.info <- map["info"]
+        
+        self.hasNonVeg <- map["hasNonVeg"]
+        self.amount <- map["amount"]
+        self.imageUrl <- (map["imageUrl"],URLTransformType())
+        self.type <- map["type"]
+        
+        self.subTypes <- map["subTypes"]
+    }
+}
+
+
+class URLTransformType : TransformType {
+    func transformToJSON(_ value: URL?) -> String? {
+        return value?.absoluteString
+    }
+    
+    func transformFromJSON(_ value: Any?) -> URL? {
+        guard let string = value as? String else {
+            return nil
+        }
+        
+        return  URL(string: string)
+    }
+}
+
+class MapperTransformType<T : ImmutableMappable> : TransformType {
+    
+    func transformToJSON(_ value: T?) -> [String:Any]? {
+        return value?.toJSON()
+    }
+    
+    func transformFromJSON(_ value: Any?) -> T? {
+        guard let string = value as? [String:Any] else {
+            return nil
+        }
+        
+        return try? T(JSON: string)
     }
 }

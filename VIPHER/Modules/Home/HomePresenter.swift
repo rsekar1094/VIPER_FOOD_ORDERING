@@ -18,11 +18,13 @@ typealias HomePresenterDependencies = (
 // MARK: - HomePresenterInput
 protocol HomePresenterInput : PresenterableInput {
     var didSelectBannerTrigger: PublishSubject<Banner> { get }
+    var didSelectCartTrigger: PublishSubject<Void> { get }
 }
 
 // MARK: - HomePresenterOutput
 protocol HomePresenterOutput : PresenterableOutput {
     var homeDataResponse : BehaviorRelay<Result<HomeData,Error>> { get }
+    var currentCartItems : BehaviorRelay<Result<[CartItem],Error>> { get }
 }
 
 
@@ -37,12 +39,14 @@ final class HomePresenter : Presenterable,HomePresenterInput,HomePresenterOutput
     
     // Outputs
     let homeDataResponse = BehaviorRelay<Result<HomeData,Error>>(value: .success(HomeData()))
+    let currentCartItems = BehaviorRelay<Result<[CartItem],Error>>(value: .success([]))
     let isLoading: Observable<Bool>
     
     // Inputs
     let viewDidLoadTrigger = PublishSubject<Void>()
     let viewDidAppearTrigger = PublishSubject<Void>()
     let didSelectBannerTrigger = PublishSubject<Banner>()
+    let didSelectCartTrigger = PublishSubject<Void>()
     
     
     // MARK: - Initializers
@@ -58,6 +62,7 @@ final class HomePresenter : Presenterable,HomePresenterInput,HomePresenterOutput
         viewDidLoadTrigger.asObservable()
             .subscribe(onNext :  { [weak self] in
                 self?.dependencies.interactor.requestHomeData()
+                self?.dependencies.interactor.getCartItems()
             })
             .disposed(by: disposeBag)
         
@@ -66,11 +71,19 @@ final class HomePresenter : Presenterable,HomePresenterInput,HomePresenterOutput
                 self?.dependencies.router.openBanner(banner: banner)
             }).disposed(by: disposeBag)
         
+        didSelectCartTrigger.asObserver()
+            .subscribe(onNext: { [weak self] in
+                self?.dependencies.router.openCart()
+            }).disposed(by: disposeBag)
         
         ///Listen for the home data from interactor
         dependencies.interactor.homeDataResponse
             .subscribe(onNext: { [weak self] data in
                 self?.homeDataResponse.accept(data)
             }).disposed(by: disposeBag)
+        
+        dependencies.interactor.cartItems.subscribe(onNext: { [weak self] data in
+            self?.currentCartItems.accept(data)
+        }).disposed(by: disposeBag)
     }
 }

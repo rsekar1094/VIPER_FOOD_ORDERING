@@ -7,6 +7,7 @@
 
 import Foundation
 import Moya
+import ObjectMapper
 
 // MARK: - NetworkRequestType
 public enum NetworkRequestType {

@@ -10,8 +10,8 @@ import ObjectMapper
 
 // MARK: - HomeData
 struct HomeData {
-    let banners : [Banner]
-    let foodTypes : [FoodType]
+    fileprivate(set) var banners : [Banner]
+    fileprivate(set) var foodTypes : [FoodType]
     
     init() {
         banners = []
@@ -21,16 +21,16 @@ struct HomeData {
 
 // MARK: - Banner
 struct Banner {
-    let id : String
-    let imageUrl : URL
-    let actionUrl : URL?
+    fileprivate(set) var id : String
+    fileprivate(set) var imageUrl : URL
+    fileprivate(set) var actionUrl : URL?
 }
 
 // MARK: - FoodType
 struct FoodType {
-    let id : String
-    let name : String
-    let subTypes : [String]
+    fileprivate(set) var id : String
+    fileprivate(set) var name : String
+    fileprivate(set) var subTypes : [String]
 }
 
 
@@ -43,6 +43,11 @@ extension HomeData: ImmutableMappable {
     init(map: Map) throws {
         self.banners = try map.value("banners")
         self.foodTypes = try map.value("foodTypes")
+    }
+    
+    mutating func mapping(map: Map) {
+        self.banners <- map["banners"]
+        self.foodTypes <- map["foodTypes"]
     }
 }
 
@@ -62,6 +67,12 @@ extension Banner: ImmutableMappable {
         }
     }
     
+    mutating func mapping(map: Map) {
+        self.id <- map["id"]
+        self.imageUrl <- (map["imageUrl"],URLTransformType())
+        self.actionUrl <- (map["actionUrl"],URLTransformType())
+    }
+    
 }
 
 // MARK: - FoodType + ObjectMapper
@@ -71,6 +82,12 @@ extension FoodType: ImmutableMappable {
         self.id = try map.value("id")
         self.name = try map.value("name")
         self.subTypes = (try?  map.value("subTypes")) ?? []
+    }
+    
+    mutating func mapping(map: Map) {
+        self.id <- map["id"]
+        self.name <- map["name"]
+        self.subTypes <- map["subTypes"]
     }
     
 }

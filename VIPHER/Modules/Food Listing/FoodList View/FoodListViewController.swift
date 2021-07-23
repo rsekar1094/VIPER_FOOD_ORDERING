@@ -19,18 +19,34 @@ class FoodListViewController : BaseViewController<FoodListPresenter> {
         return foodView
     }()
     
+    internal lazy var foodFilterView : FoodFilterView = {
+        let view = FoodFilterView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.filterTypes = presenter.getAllowedFilterTypes()
+        view.filterDelegate = self
+        view.contentInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        return view
+    }()
+    
     // MARK: - Properties
     weak var delegate : ParentPageControlProtocol?
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
-        self.view.addSubview(foodView)
         super.viewDidLoad()
+
+        self.view.addSubview(foodView)
+        self.view.addSubview(foodFilterView)
     
         NSLayoutConstraint.activate([
-            foodView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            foodView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            foodView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            foodFilterView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            foodFilterView.heightAnchor.constraint(equalToConstant: 35),
+            foodFilterView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            foodFilterView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            
+            foodView.topAnchor.constraint(equalTo: self.foodFilterView.bottomAnchor,constant: 10),
+            foodView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            foodView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
             foodView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         ])
         
@@ -53,17 +69,28 @@ class FoodListViewController : BaseViewController<FoodListPresenter> {
         delegate?.assignCurrentChildScrollView(self.foodView)
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        coordinator.animate(alongsideTransition: { _ in
+            self.foodView.collectionViewLayout.invalidateLayout()
+        }, completion: { _ in
+            self.foodView.reloadData()
+        })
+    }
+    
 }
 
 // MARK: - FoodListDelegate
 extension FoodListViewController : FoodListDelegate {
     
     func didSelect(food : Food) {
-        print("didSelect \(food.id)")
+        
     }
     
     func addToCart(food : Food) {
-        print("addToCart \(food.id)")
+        presenter.addFoodToCart.onNext(food)
+        self.foodView.addedFoodInToCart(food : food,totalItemInCart: presenter.getFoodCartCount(food : food))
     }
     
     func didFoodListScrolled() {
@@ -76,5 +103,12 @@ extension FoodListViewController : FoodListDelegate {
     
     func didFoodListEndDecelerate() {
         self.delegate?.didChildScrollViewEndDecelerate(self.foodView)
+    }
+}
+
+// MARK: - FoodFilterDelegate
+extension FoodListViewController : FoodFilterDelegate {
+    func doFilterFood(with filter: String?) {
+        self.presenter.foodFilter.onNext(filter)
     }
 }

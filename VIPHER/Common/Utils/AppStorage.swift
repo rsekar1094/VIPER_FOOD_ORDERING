@@ -25,6 +25,18 @@ class AppStorage {
         return defaults.dictionary(forKey: suite+key)
     }
     
+    public static func getArray(suite : String , key : String) -> [Any]? {
+        return defaults.array(forKey: suite+key)
+    }
+    
+    public static func getString(suite : String , key : String) -> String? {
+        return defaults.string(forKey: suite+key)
+    }
+    
+    public static func getStringArray(suite : String , key : String) -> [String] {
+        return defaults.stringArray(forKey: suite+key) ?? []
+    }
+    
     public static func remove(suite : String , key : String){
         defaults.removeObject(forKey: suite+key)
         defaults.synchronize()

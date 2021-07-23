@@ -19,6 +19,13 @@ class HomeViewController : BasePageViewController<HomePresenter> {
         return bannerView
     }()
     
+    internal lazy var cartButton : CartButton = {
+        let button = CartButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(didPressCartButton), for: .touchUpInside)
+        return button
+    }()
+    
     // MARK: - Constraints
     private weak var bannerViewHeightConstraint : NSLayoutConstraint?
     private weak var containerViewHeightConstraint : NSLayoutConstraint?
@@ -69,6 +76,7 @@ class HomeViewController : BasePageViewController<HomePresenter> {
     override func viewDidLoad() {
         self.view.addSubview(bannerView)
         super.viewDidLoad()
+        self.view.addSubview(cartButton)
         
         setUp()
         
@@ -82,6 +90,37 @@ class HomeViewController : BasePageViewController<HomePresenter> {
         }, onError: { error in
             self.showAlert(title: NSLocalizedString("Error!", comment: ""), message: error.localizedDescription)
         }).disposed(by: disposeBag)
+        
+        presenter.currentCartItems.subscribe(onNext: { [weak self] response in
+            switch response {
+            case .success(let items):
+                self?.cartButton.totalItem = items.count
+            case .failure(_):
+                break
+            }
+        }).disposed(by: disposeBag)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        coordinator.animate(alongsideTransition: { _ in
+            self.bannerView.invalidateLayout()
+        }, completion: { _ in
+            self.bannerView.reloadData()
+        })
     }
     
     override func viewDidLayoutSubviews() {
@@ -95,6 +134,12 @@ class HomeViewController : BasePageViewController<HomePresenter> {
     
     override func getSegmentControlTopConstraint() -> NSLayoutConstraint {
         segmentedControl.topAnchor.constraint(equalTo: bannerView.bottomAnchor,constant: -bannerBottomMargin)
+    }
+    
+    // MARK: - Action buttons
+    @objc
+    private func didPressCartButton() {
+        presenter.inputs.didSelectCartTrigger.onNext(())
     }
     
     // MARK: - configureBannerState
@@ -216,7 +261,12 @@ extension HomeViewController {
             containerView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
             
             bannerViewHeightConstraint!,
-            containerViewHeightConstraint!
+            containerViewHeightConstraint!,
+            
+            cartButton.widthAnchor.constraint(equalToConstant: 50),
+            cartButton.heightAnchor.constraint(equalToConstant: 50),
+            cartButton.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            cartButton.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
         ])
     }
     
@@ -275,4 +325,60 @@ extension HomeViewController {
         }
     }
     
+}
+
+
+
+class CartButton : UIButton {
+    
+    var totalItem : Int = 0 {
+        didSet {
+            badgeLayer.isHidden = totalItem <= 0
+            textLayer.string = "\(totalItem)"
+        }
+    }
+    
+    private let badgeLayer : CAShapeLayer
+    private let textLayer : CATextLayer
+    
+    override init(frame: CGRect) {
+        badgeLayer = CAShapeLayer()
+        textLayer = CATextLayer()
+        super.init(frame: frame)
+        
+        self.layer.addSublayer(badgeLayer)
+        badgeLayer.addSublayer(textLayer)
+        setUp()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        self.layer.cornerRadius = self.frame.size.height / 2
+        
+        let badgeRect : CGRect = CGRect(x: frame.width - 15, y: -4, width: 20, height: 20)
+        textLayer.frame = badgeRect
+        badgeLayer.path = UIBezierPath(roundedRect: badgeRect, cornerRadius: 10).cgPath
+    }
+    
+    
+    private func setUp() {
+        self.backgroundColor = .defaultBackground
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.4).cgColor
+        self.setImage(UIImage(systemName: "cart",withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)),
+                      for: .normal)
+        self.tintColor = .theme
+        
+        badgeLayer.fillColor = UIColor.red.cgColor
+        badgeLayer.strokeColor = UIColor.red.cgColor
+    
+        textLayer.fontSize = 15
+        textLayer.foregroundColor = UIColor.white.cgColor
+        textLayer.alignmentMode = .center
+    }
 }

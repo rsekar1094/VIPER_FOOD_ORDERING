@@ -104,7 +104,10 @@ class BasePageViewController<P : Presenterable> : BaseViewController<P>, UIPageV
             return
         }
         
-        self.pageViewController?.setViewControllers([firstvc], direction: UIPageViewController.NavigationDirection.forward, animated: false)
+        DispatchQueue.main.async {
+            self.pageViewController?.setViewControllers([firstvc],
+                                                        direction: UIPageViewController.NavigationDirection.forward, animated: false)
+        }
         self.controllers = controllers
     }
     
@@ -165,6 +168,10 @@ class BasePageViewController<P : Presenterable> : BaseViewController<P>, UIPageV
     }
     
     func setCurrentSelectionIndex(_ index : Int) {
+        guard !(self.pageViewController!.viewControllers?.isEmpty ?? true) else {
+            return
+        }
+        
         if Int(segmentedControl.selectedSegmentIndex) != index {
             self.segmentedControl.setSelectedSegmentIndex(UInt(index), animated: true)
         }
@@ -175,10 +182,12 @@ class BasePageViewController<P : Presenterable> : BaseViewController<P>, UIPageV
             
             (newVC as? ChildPageControlProtocol)?.didSelectionChange(.willSelect)
             
-            self.pageViewController?.setViewControllers([newVC], direction: currentIndex < segmentedControl.selectedSegmentIndex ? UIPageViewController.NavigationDirection.forward : UIPageViewController.NavigationDirection.reverse, animated: true) { [weak self] (completed) in
-               
-                (self?.controllers[oldIndex] as? ChildPageControlProtocol)?.didSelectionChange(.didDeSelect)
-                (newVC as? ChildPageControlProtocol)?.didSelectionChange(.didSelect)
+            DispatchQueue.main.async {
+                self.pageViewController?.setViewControllers([newVC], direction: currentIndex < self.segmentedControl.selectedSegmentIndex ? UIPageViewController.NavigationDirection.forward : UIPageViewController.NavigationDirection.reverse, animated: true) { [weak self] (completed) in
+                   
+                    (self?.controllers[oldIndex] as? ChildPageControlProtocol)?.didSelectionChange(.didDeSelect)
+                    (newVC as? ChildPageControlProtocol)?.didSelectionChange(.didSelect)
+                }
             }
         }
     }

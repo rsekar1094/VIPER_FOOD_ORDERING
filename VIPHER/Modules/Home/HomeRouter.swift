@@ -53,4 +53,8 @@ final class HomeRouterOutput : Routerable {
             view.present(vc, animated: true)
         }
     }
+    
+    func openCart() {
+        CartRouterInput().push(from: self.view, entryEntity: CartEntity())
+    }
 }

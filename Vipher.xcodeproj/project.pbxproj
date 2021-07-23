@@ -11,6 +11,13 @@
 		182D2B4126A6AA1C00F3592E /* SampleDrinksFoodListData.json in Resources */ = {isa = PBXBuildFile; fileRef = 182D2B4026A6AA1C00F3592E /* SampleDrinksFoodListData.json */; };
 		1858FF7526A75BAA00895C4C /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1858FF7426A75BAA00895C4C /* BannerView.swift */; };
 		1858FF7826A75C9800895C4C /* FoodListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1858FF7726A75C9800895C4C /* FoodListView.swift */; };
+		1884525826A8761C0098C9ED /* Cart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884525726A8761C0098C9ED /* Cart.swift */; };
+		1884525A26A876620098C9ED /* CartPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884525926A876620098C9ED /* CartPresenter.swift */; };
+		1884525C26A8766C0098C9ED /* CartInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884525B26A8766C0098C9ED /* CartInteractor.swift */; };
+		1884525E26A876720098C9ED /* CartRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884525D26A876720098C9ED /* CartRouter.swift */; };
+		1884526126A876B00098C9ED /* CartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884526026A876B00098C9ED /* CartViewController.swift */; };
+		1884526326A88BA20098C9ED /* CartItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884526226A88BA20098C9ED /* CartItemRowView.swift */; };
+		1884526526A9D7760098C9ED /* FoodFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884526426A9D7760098C9ED /* FoodFilterView.swift */; };
 		1891BF9526A5C21E00481F92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1891BF9426A5C21D00481F92 /* AppDelegate.swift */; };
 		1891BF9726A5C21E00481F92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1891BF9626A5C21E00481F92 /* SceneDelegate.swift */; };
 		1891BF9C26A5C21E00481F92 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1891BF9A26A5C21E00481F92 /* Main.storyboard */; };
@@ -57,6 +64,13 @@
 		182D2B4026A6AA1C00F3592E /* SampleDrinksFoodListData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SampleDrinksFoodListData.json; sourceTree = "<group>"; };
 		1858FF7426A75BAA00895C4C /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		1858FF7726A75C9800895C4C /* FoodListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodListView.swift; sourceTree = "<group>"; };
+		1884525726A8761C0098C9ED /* Cart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cart.swift; sourceTree = "<group>"; };
+		1884525926A876620098C9ED /* CartPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartPresenter.swift; sourceTree = "<group>"; };
+		1884525B26A8766C0098C9ED /* CartInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartInteractor.swift; sourceTree = "<group>"; };
+		1884525D26A876720098C9ED /* CartRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartRouter.swift; sourceTree = "<group>"; };
+		1884526026A876B00098C9ED /* CartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewController.swift; sourceTree = "<group>"; };
+		1884526226A88BA20098C9ED /* CartItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItemRowView.swift; sourceTree = "<group>"; };
+		1884526426A9D7760098C9ED /* FoodFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodFilterView.swift; sourceTree = "<group>"; };
 		1891BF9126A5C21D00481F92 /* Vipher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vipher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1891BF9426A5C21D00481F92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1891BF9626A5C21E00481F92 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -128,9 +142,19 @@
 			children = (
 				1891BFAA26A66A6400481F92 /* FoodListViewController.swift */,
 				1858FF7726A75C9800895C4C /* FoodListView.swift */,
+				1884526426A9D7760098C9ED /* FoodFilterView.swift */,
 				1893B07A26A7DFE200851216 /* FoodRowView.swift */,
 			);
 			path = "FoodList View";
+			sourceTree = "<group>";
+		};
+		1884525F26A876A60098C9ED /* Cart View */ = {
+			isa = PBXGroup;
+			children = (
+				1884526026A876B00098C9ED /* CartViewController.swift */,
+				1884526226A88BA20098C9ED /* CartItemRowView.swift */,
+			);
+			path = "Cart View";
 			sourceTree = "<group>";
 		};
 		1891BF8826A5C21D00481F92 = {
@@ -234,6 +258,7 @@
 			children = (
 				18E0112026A5D83A00FBB986 /* HomeData.swift */,
 				18E0112226A5DBE400FBB986 /* Food.swift */,
+				1884525726A8761C0098C9ED /* Cart.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -284,6 +309,10 @@
 		18E0113026A5E2A800FBB986 /* Cart */ = {
 			isa = PBXGroup;
 			children = (
+				1884525F26A876A60098C9ED /* Cart View */,
+				1884525926A876620098C9ED /* CartPresenter.swift */,
+				1884525B26A8766C0098C9ED /* CartInteractor.swift */,
+				1884525D26A876720098C9ED /* CartRouter.swift */,
 			);
 			path = Cart;
 			sourceTree = "<group>";
@@ -451,12 +480,19 @@
 				18E0111A26A5D03600FBB986 /* AppStorage.swift in Sources */,
 				18E0112326A5DBE400FBB986 /* Food.swift in Sources */,
 				18E0111026A5C8E400FBB986 /* NetworkManager.swift in Sources */,
+				1884525C26A8766C0098C9ED /* CartInteractor.swift in Sources */,
+				1884525E26A876720098C9ED /* CartRouter.swift in Sources */,
 				1891BFB126A66A8300481F92 /* FoodListRouter.swift in Sources */,
 				18E0112C26A5DE8900FBB986 /* Viewable.swift in Sources */,
+				1884526526A9D7760098C9ED /* FoodFilterView.swift in Sources */,
 				1891BFBC26A67F0700481F92 /* BasePageViewController.swift in Sources */,
 				181A715826A736F4005929A2 /* String+Extension.swift in Sources */,
+				1884526126A876B00098C9ED /* CartViewController.swift in Sources */,
+				1884526326A88BA20098C9ED /* CartItemRowView.swift in Sources */,
+				1884525826A8761C0098C9ED /* Cart.swift in Sources */,
 				1893B07B26A7DFE200851216 /* FoodRowView.swift in Sources */,
 				18E0113726A5E68F00FBB986 /* UIColor+Extensions.swift in Sources */,
+				1884525A26A876620098C9ED /* CartPresenter.swift in Sources */,
 				1891BFAD26A66A6D00481F92 /* FoodListPresenter.swift in Sources */,
 				18E0111226A5C9D400FBB986 /* NetworkManager+Types.swift in Sources */,
 				18E0113B26A5ECD900FBB986 /* HomeRouter.swift in Sources */,

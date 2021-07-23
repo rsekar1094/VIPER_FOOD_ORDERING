@@ -31,3 +31,10 @@ extension UITableView {
         return cell
     }
 }
+
+extension UITableView {
+    func indexPath(for view: UIView) -> IndexPath? {
+        let point = self.convert(CGPoint.init(x: view.bounds.midX,y: view.bounds.midY), from:view)
+        return self.indexPathForRow(at: point)
+    }
+}

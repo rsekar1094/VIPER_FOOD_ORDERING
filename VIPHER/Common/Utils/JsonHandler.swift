@@ -50,4 +50,13 @@ struct JsonHandler {
             return String(data: data, encoding: .utf8) ?? ""
         }
     }
+    
+    static func jsonString(_ data: Any) -> String? {
+        do {
+            let prettyData = try JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
+            return String(data: prettyData, encoding: .utf8)
+        } catch {
+            return nil
+        }
+    }
 }

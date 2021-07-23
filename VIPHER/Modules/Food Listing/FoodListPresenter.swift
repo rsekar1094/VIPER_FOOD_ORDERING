@@ -17,7 +17,8 @@ typealias FoodListPresenterDependencies = (
 
 // MARK: - FoodListPresenterInput
 protocol FoodListPresenterInput : PresenterableInput {
-    
+    var addFoodToCart : PublishSubject<Food> { get }
+    var foodFilter : PublishSubject<String?> { get }
 }
 
 // MARK: - FoodListPresenterOutput
@@ -40,6 +41,8 @@ final class FoodListPresenter : Presenterable,FoodListPresenterInput,FoodListPre
     // Inputs
     let viewDidLoadTrigger = PublishSubject<Void>()
     let viewDidAppearTrigger = PublishSubject<Void>()
+    let addFoodToCart = PublishSubject<Food>()
+    let foodFilter = PublishSubject<String?>()
     
     
     private let disposeBag = DisposeBag()
@@ -53,6 +56,14 @@ final class FoodListPresenter : Presenterable,FoodListPresenterInput,FoodListPre
         subscribe()
     }
     
+    public func getFoodCartCount(food : Food) -> Int {
+        return dependencies.interactor.getFoodCartCount(food: food)
+    }
+    
+    public func getAllowedFilterTypes() -> [String] {
+        return dependencies.interactor.getAllowedFilterTypes()
+    }
+
     // MARK: - Subscription
     private func subscribe() {
         viewDidAppearTrigger.asObservable()
@@ -65,5 +76,13 @@ final class FoodListPresenter : Presenterable,FoodListPresenterInput,FoodListPre
             .subscribe(onNext: { [weak self] data in
                 self?.foodListResponse.accept(data)
             }).disposed(by: disposeBag)
+        
+        addFoodToCart.subscribe(onNext:{ [weak self] food in
+            self?.dependencies.interactor.add(food: food)
+        }).disposed(by: self.disposeBag)
+        
+        foodFilter.subscribe(onNext:{ [weak self] filter in
+            self?.dependencies.interactor.filterFoods(with: filter)
+        }).disposed(by: self.disposeBag)
     }
 }

@@ -22,6 +22,8 @@ final class FoodListInteractor : Interactorable {
     
     private let disposeBag = DisposeBag()
     
+    private var foodItems : [Food] = []
+    
     private let foodType : FoodType
     
     // MARK: - Initialziers
@@ -35,6 +37,35 @@ final class FoodListInteractor : Interactorable {
         isFoodDataWaitingForFoodListResponse = publishableisFoodDataWaitingForResponse.asObservable()
     }
     
+    public func add(food : Food) {
+        if let index = CartDataSource.shared.items.firstIndex(where: { $0.food.id == food.id }) {
+            var item = CartDataSource.shared.items[index]
+            item.quantity += 1
+            CartDataSource.shared.items[index] = item
+        } else {
+            CartDataSource.shared.items.append(CartItem(food: food, quantity: 1))
+        }
+    }
+    
+    public func getFoodCartCount(food : Food) -> Int {
+        return CartDataSource.shared.items.first(where: { $0.food.id == food.id })?.quantity ?? 0
+    }
+    
+    public func getAllowedFilterTypes() -> [String] {
+        return foodType.subTypes
+    }
+    
+    public func filterFoods(with filter : String?) {
+        let items : [Food]
+        if let filter = filter {
+            items = foodItems.filter { $0.subTypes.contains(filter) }
+        } else {
+            items = foodItems
+        }
+        
+        self.publishablefoodList.accept(.success(items))
+    }
+    
     // MARK: - API
     public func requestFoodList() {
         publishableisFoodDataWaitingForResponse.accept(true)
@@ -44,6 +75,7 @@ final class FoodListInteractor : Interactorable {
                 do {
                     let data = try Mapper<Food>().mapArray(JSONString : JsonHandler.jsonStringFromData(response.data))
                     self.publishablefoodList.accept(.success(data))
+                    self.foodItems = data
                 } catch let error {
                     self.publishablefoodList.accept(.failure(error))
                 }
