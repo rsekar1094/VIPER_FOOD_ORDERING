@@ -168,7 +168,11 @@ extension FoodRowView {
             return
         }
         
-        let description = NSMutableAttributedString(attributedString: NSAttributedString(html: food.description)!)
+        guard let descriptionString = NSAttributedString(html: food.description) else {
+            return
+        }
+        
+        let description = NSMutableAttributedString(attributedString: descriptionString)
         var additionalAttributes : [NSAttributedString.Key : Any] = [:]
         switch self.traitCollection.userInterfaceStyle {
         case .dark:
