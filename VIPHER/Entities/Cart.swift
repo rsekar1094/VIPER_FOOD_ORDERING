@@ -8,9 +8,13 @@
 import Foundation
 import ObjectMapper
 
-struct CartItem {
+struct CartItem : Hashable {
     fileprivate(set) var food : Food
     var quantity : Int
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(food.id)
+    }
 }
 
 

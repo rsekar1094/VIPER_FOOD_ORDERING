@@ -32,7 +32,7 @@ class FoodListView : UICollectionView {
             self.reloadSnapshot()
         }
     }
-    private(set) var foodDataSource: UICollectionViewDiffableDataSource<FoodHeaderItem, Food>!
+    private var foodDataSource: UICollectionViewDiffableDataSource<FoodHeaderItem, Food>!
     
     // MARK: - Initializers
     init() {
