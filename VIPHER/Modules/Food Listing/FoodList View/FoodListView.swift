@@ -13,7 +13,11 @@ protocol FoodListDelegate : AnyObject {
     func didSelect(food : Food)
     func addToCart(food : Food)
     
+    func didFoodListWillBeginDragging()
     func didFoodListScrolled()
+
+    func didFoodListWillEndDragging(withVelocity velocity: CGPoint,
+                                    targetContentOffset: UnsafeMutablePointer<CGPoint>)
     func didFoodListEndDragging(willDecelerate : Bool)
     func didFoodListEndDecelerate()
 }
@@ -134,6 +138,10 @@ extension FoodListView : UICollectionViewDelegate,UICollectionViewDelegateFlowLa
         foodDelegate?.didSelect(food: items[indexPath.item])
     }
     
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.foodDelegate?.didFoodListWillBeginDragging()
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.foodDelegate?.didFoodListScrolled()
     }
@@ -144,5 +152,9 @@ extension FoodListView : UICollectionViewDelegate,UICollectionViewDelegateFlowLa
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         self.foodDelegate?.didFoodListEndDragging(willDecelerate: decelerate)
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        self.foodDelegate?.didFoodListWillEndDragging(withVelocity: velocity, targetContentOffset: targetContentOffset)
     }
 }

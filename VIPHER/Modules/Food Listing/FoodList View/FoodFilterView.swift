@@ -33,7 +33,7 @@ class FoodFilterView : UICollectionView {
         self.delegate = self
         self.dataSource = self
         self.showsHorizontalScrollIndicator = false
-        self.backgroundColor = .clear
+        self.backgroundColor = .defaultBackground
         self.allowsMultipleSelection = false
         self.allowsSelection = true
         

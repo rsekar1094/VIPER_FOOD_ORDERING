@@ -33,6 +33,13 @@ class HomeViewController : BasePageViewController<HomePresenter> {
     // MARK: - Properties
     private let bannerBottomMargin : CGFloat = 30
     private weak var childScrollView : UIScrollView?
+    private var collapsableData : [String : CollapsableData] = [:]
+    
+    ///Maximum banner height which can it holds - 70 percentage of it's view
+    private var MAX_BANNER_HEIGHT : CGFloat { return self.view.frame.size.height * 0.7 }
+    
+    ///Minimum banner height can have - safe area top + Bottom margin
+    private var MIN_BANNER_HEIGHT : CGFloat { return self.view.safeAreaInsets.top + bannerBottomMargin }
     
     internal var _statusBarStyle : UIStatusBarStyle = .lightContent {
         didSet {
@@ -69,7 +76,7 @@ class HomeViewController : BasePageViewController<HomePresenter> {
         scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.showsVerticalScrollIndicator = false
         scrollView.delegate = self
-        scrollView.backgroundColor = .defaultBackground
+        scrollView.backgroundColor = .black
         self.view = scrollView
     }
     
@@ -78,8 +85,10 @@ class HomeViewController : BasePageViewController<HomePresenter> {
         super.viewDidLoad()
         self.view.addSubview(cartButton)
         
+        
         setUp()
         
+        ///Listen for the home data and when response comes  reload the UI
         presenter.homeDataResponse.subscribe(onNext: { response in
             switch response {
             case .success(let homeData):
@@ -91,6 +100,9 @@ class HomeViewController : BasePageViewController<HomePresenter> {
             self.showAlert(title: NSLocalizedString("Error!", comment: ""), message: error.localizedDescription)
         }).disposed(by: disposeBag)
         
+        
+        ///Listen to the cart items change
+        ///Update the unique items count in the cart based on this to the cart button
         presenter.currentCartItems.subscribe(onNext: { [weak self] response in
             switch response {
             case .success(let items):
@@ -104,12 +116,14 @@ class HomeViewController : BasePageViewController<HomePresenter> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        assignHeightForSubContainers()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        assignHeightForSubContainers()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
@@ -120,6 +134,7 @@ class HomeViewController : BasePageViewController<HomePresenter> {
             self.bannerView.invalidateLayout()
         }, completion: { _ in
             self.bannerView.reloadData()
+            self.assignHeightForSubContainers()
         })
     }
     
@@ -129,7 +144,6 @@ class HomeViewController : BasePageViewController<HomePresenter> {
         segmentedControl.layer.masksToBounds = true
         segmentedControl.layer.maskedCorners = [.layerMinXMinYCorner,.layerMaxXMinYCorner]
         segmentedControl.layer.cornerRadius = 30
-        assignHeightForSubContainers()
     }
     
     override func getSegmentControlTopConstraint() -> NSLayoutConstraint {
@@ -148,26 +162,29 @@ class HomeViewController : BasePageViewController<HomePresenter> {
         case .visible:
             _statusBarStyle = .lightContent
             bannerView.alpha = 1
+            self.view.backgroundColor = .black
             
-            ///Disabling the child scroll
-            childScrollView?.isScrollEnabled = false
         case .transition(let progress):
             if progress > 0.75 {
                 if bannerView.alpha == 1 {
-                    UIView.animate(withDuration: 0.2, animations: { self.bannerView.alpha = 1 - progress })
+                    UIView.animate(withDuration: 0.2, animations: {
+                        self.bannerView.alpha = 1 - progress
+                        self.view.backgroundColor = .defaultBackground
+                    })
                 } else {
                     bannerView.alpha = 1 - progress
+                    self.view.backgroundColor = .defaultBackground
                 }
                 _statusBarStyle = traitCollection.userInterfaceStyle == .light ? .darkContent : .lightContent
             } else {
                 bannerView.alpha = 1
                 _statusBarStyle = .lightContent
+                self.view.backgroundColor = .black
             }
-            childScrollView?.isScrollEnabled = false
         case .hidden:
             bannerView.alpha = 0
+            self.view.backgroundColor = .defaultBackground
             _statusBarStyle = traitCollection.userInterfaceStyle == .light ? .darkContent : .lightContent
-            childScrollView?.isScrollEnabled = true
         }
     }
 }
@@ -182,45 +199,145 @@ extension HomeViewController : BannerDelegate {
 // MARK: - UIScrollViewDelegate
 extension HomeViewController : UIScrollViewDelegate {
     
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        let data : CollapsableData
+        if let collapsableData = collapsableData[scrollView.instanceId] {
+            data = collapsableData
+        } else {
+            data = CollapsableData()
+            collapsableData[scrollView.instanceId] = data
+        }
+        
+        let touchPoint : CGPoint
+        
+        if scrollView == view {
+            let point = scrollView.panGestureRecognizer.location(in: self.view.superview!)
+            touchPoint = point//CGPoint(x: point.x, y: CGFloat(Int(point.y) % Int(self.view.frame.height)))
+        } else {
+            touchPoint = scrollView.panGestureRecognizer.location(in: self.view)
+        }
+       
+        data.previousTouchPoint = touchPoint
+        data.previousContentOffset = scrollView.contentOffset
+    }
+    
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        ///If user scroll beyond the banner then set the state as hidden
-        ///if complete banner is visible then set it to visible
-        ///else set banner state to transition - with how many percentage it is hidden
+        guard let bannerHeightConstraint = self.bannerViewHeightConstraint else {
+            return
+        }
         
-        ///since we wanted to stop child controllers below safe area, banner can visible on the safe area
-        let bannerEndOffset = bannerView.frame.maxY - self.view.safeAreaInsets.top
+        guard let collapsableData = self.collapsableData[scrollView.instanceId] else {
+            return
+        }
         
-        ///child controllers are overlayed on top of banner with  ```bannerBottomMargin``` so adding that to consider as current offset
-        let currentOffset = scrollView.contentOffset.y + bannerBottomMargin
+        let touchPoint : CGPoint
+        if scrollView == view {
+            ///if current view itself scroll view then find the location based on its parent view, inorder to avoid zero differnece
+            let point = scrollView.panGestureRecognizer.location(in: self.view.superview!)
+            touchPoint = point
+        } else {
+            touchPoint = scrollView.panGestureRecognizer.location(in: self.view)
+        }
         
-        if currentOffset == bannerView.frame.origin.x {
+        let diff = touchPoint.y - collapsableData.previousTouchPoint.y
+        
+        guard diff != 0 else {
+            if scrollView == self.view && scrollView.isDecelerating {
+                ///if it is decelerating then set the appropriae state based on its content offset point
+                
+                let currentOffset = scrollView.contentOffset.y + bannerBottomMargin
+                 
+                if currentOffset == bannerView.frame.origin.x {
+                     self.bannerState = .visible
+                 } else if bannerHeightConstraint.constant == MIN_BANNER_HEIGHT {
+                     self.bannerState = .hidden
+                 } else {
+                    let percentage = (scrollView.contentOffset.y) / (segmentedControl.frame.origin.y - self.view.safeAreaInsets.top)
+                    let bannerHiddenPercentage = min(max(percentage,0),1)
+                    self.bannerState = .transition(bannerHiddenPercentage)
+                 }
+                
+                 assignHeightForSubContainers()
+                return
+            }
+            return
+        }
+        
+        var newBannerHeight : CGFloat = bannerHeightConstraint.constant
+        newBannerHeight = bannerHeightConstraint.constant + diff
+        
+        if newBannerHeight > MAX_BANNER_HEIGHT {
+            newBannerHeight = MAX_BANNER_HEIGHT
+        } else if newBannerHeight < MIN_BANNER_HEIGHT {
+            newBannerHeight = MIN_BANNER_HEIGHT
+        }
+        
+        ///if new height and old height not equal then only assign
+        ///resent offset of scroll to previous sicne user pan help to expand/collapse - scrollview need to stay where ever it was there
+        if newBannerHeight != bannerHeightConstraint.constant {
+            bannerView.invalidateLayout()
+            bannerHeightConstraint.constant = newBannerHeight
+            scrollView.contentOffset = collapsableData.previousContentOffset
+        }
+        
+        collapsableData.previousContentOffset = scrollView.contentOffset
+        
+        ///if height is equal to MAX then expanded
+        ///else if equal to MIN then collapsed
+        ///else -- it is in between of collapsing state
+        if bannerHeightConstraint.constant == MAX_BANNER_HEIGHT {
             self.bannerState = .visible
-        } else if currentOffset >= bannerEndOffset {
+        } else if bannerHeightConstraint.constant == MIN_BANNER_HEIGHT {
             self.bannerState = .hidden
         } else {
-            self.bannerState = .transition(currentOffset/bannerEndOffset)
+            self.bannerState = .transition(1 - (bannerHeightConstraint.constant / MAX_BANNER_HEIGHT))
         }
+        
+        collapsableData.previousTouchPoint = touchPoint
     }
     
 }
 // MARK: - ParentPageControlProtocol
 extension HomeViewController : ParentPageControlProtocol {
-
+    
     func assignCurrentChildScrollView(_ scrollView : UIScrollView) {
         self.childScrollView = scrollView
         configureBannerState()
     }
     
+    func willChildScrollViewBeginDragging(_ scrollView : UIScrollView) {
+        scrollViewWillBeginDragging(scrollView)
+    }
+    
     func didChildScrollViewScrolled(_ scrollView : UIScrollView) {
-        let translation = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
-        
-        ///If banner state is hidden  and  user is dragging the child controllers  and child scroll view is not at top then disable the child scroll view
-        ///inorder to activate the parent scroll
-        if self.bannerState == .hidden && scrollView.isDragging &&
-            !scrollView.isDecelerating && scrollView.contentOffset.y <= scrollView.contentInset.top &&
-            translation.y > 0 {
-            scrollView.isScrollEnabled = false
+        guard let collapsableData = self.collapsableData[scrollView.instanceId] else {
+            return
         }
+        
+        let touchPoint = scrollView.panGestureRecognizer.location(in: self.view)
+        
+        let diff = touchPoint.y - collapsableData.previousTouchPoint.y
+        
+        let isScrollingDown : Bool
+        //scroll down
+        if diff < 0 {
+            isScrollingDown = true
+        } else if diff > 0 { //scroll up
+            isScrollingDown = false
+        } else {
+            return
+        }
+        
+        if !isScrollingDown && scrollView.contentOffset.y > scrollView.contentInset.top && self.bannerState == .hidden {
+            ///if scrolling up and content offset is greater than it's inset/zero then
+            ///do nothing to change on banner height
+            ///just scroll inside the child area
+            collapsableData.previousTouchPoint = touchPoint
+            return
+        }
+        
+        scrollViewDidScroll(scrollView)
     }
     
     func didChildScrollViewEndDragging(_ scrollView : UIScrollView,willDecelerate : Bool) {
@@ -228,7 +345,12 @@ extension HomeViewController : ParentPageControlProtocol {
     }
     
     func didChildScrollViewEndDecelerate(_ scrollView : UIScrollView) {
-       
+        
+    }
+    
+    func didChildScrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint,
+                                           targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
     }
 }
 
@@ -276,12 +398,23 @@ extension HomeViewController {
             return
         }
         
-        ///Banner will cover 70 percentage of the scrreen
-        let bannerHeight = self.view.frame.size.height * 0.7
+        
+        let bannerHeight : CGFloat
+        switch bannerState {
+        case .visible:
+            bannerHeight = MAX_BANNER_HEIGHT
+        case .hidden:
+            bannerHeight = MIN_BANNER_HEIGHT
+        case .transition(let hidePercentage):
+            let totalHeight =  MAX_BANNER_HEIGHT
+            let height = totalHeight - (totalHeight * hidePercentage)
+            bannerHeight = max(height,MIN_BANNER_HEIGHT)
+        }
         
         var needLayout : Bool = false
         
         if bannerViewHeightConstraint.constant != bannerHeight {
+            bannerView.invalidateLayout()
             bannerViewHeightConstraint.constant = bannerHeight
             needLayout = true
         }
@@ -298,6 +431,7 @@ extension HomeViewController {
             self.view.setNeedsLayout()
         }
     }
+    
 }
 
 
@@ -326,3 +460,17 @@ extension HomeViewController {
     }
     
 }
+
+
+// MARK: - CollapsableData
+class CollapsableData {
+    
+    ///Previous content Offset before they did scroll
+    ///used to set it back to older if something change while expand/collapse
+    public var previousContentOffset : CGPoint = .zero
+    
+    ///Previous touch point on their scrollview
+    ///used to find the difference in panning location
+    public var previousTouchPoint : CGPoint = .zero
+}
+

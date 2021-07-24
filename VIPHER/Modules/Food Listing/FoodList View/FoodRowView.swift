@@ -12,7 +12,7 @@ import UIKit
 class FoodRowView : UICollectionViewCell {
     
     // MARK: - Static
-    private static let imageHeight : CGFloat = 165
+    private static let imageHeight : CGFloat = 250
     private static let horziontalMargin : CGFloat = 20
     private static let titleTopMargin : CGFloat = 22
     private static let descriptionTopMargin : CGFloat = 0
@@ -312,31 +312,9 @@ class AddToCartButton  : UIButton {
     }
     
     private func updateBackgroundColor(from : UIColor,to : UIColor,fromLeft : Bool) {
-        let startLocations = fromLeft ? [0, 0] : [1,2]
-        let endLocations = fromLeft ? [1, 2] : [0,0]
-        
-        CATransaction.begin()
-        CATransaction.setCompletionBlock({
-            self.backgroundLayer.locations = [1,1]
+        UIView.animate(withDuration: 0.5, animations: {
             self.backgroundLayer.colors = [to.cgColor,to.cgColor]
         })
-        
-        let animationGroup = CAAnimationGroup()
-        
-        let colorAnimation = CABasicAnimation(keyPath: #keyPath(CAGradientLayer.colors))
-        colorAnimation.fromValue = from.cgColor
-        colorAnimation.toValue = to.cgColor
-        colorAnimation.duration = 0.2
-        
-        let locationAnimation = CABasicAnimation(keyPath: #keyPath(CAGradientLayer.locations))
-        locationAnimation.fromValue = startLocations
-        locationAnimation.toValue = endLocations
-        locationAnimation.duration = 0.2
-        
-        animationGroup.animations = [colorAnimation,locationAnimation]
-        
-        backgroundLayer.removeAllAnimations()
-        backgroundLayer.add(animationGroup, forKey: "loc")
-        CATransaction.commit()
+        //TODO can animate the colors from left to right or right to left
     }
 }

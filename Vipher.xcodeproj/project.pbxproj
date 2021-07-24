@@ -19,6 +19,7 @@
 		1884526326A88BA20098C9ED /* CartItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884526226A88BA20098C9ED /* CartItemRowView.swift */; };
 		1884526526A9D7760098C9ED /* FoodFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884526426A9D7760098C9ED /* FoodFilterView.swift */; };
 		1884526726AAD24A0098C9ED /* CartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884526626AAD24A0098C9ED /* CartButton.swift */; };
+		1884526926ABEBDC0098C9ED /* NSObject+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1884526826ABEBDC0098C9ED /* NSObject+Extension.swift */; };
 		1891BF9526A5C21E00481F92 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1891BF9426A5C21D00481F92 /* AppDelegate.swift */; };
 		1891BF9726A5C21E00481F92 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1891BF9626A5C21E00481F92 /* SceneDelegate.swift */; };
 		1891BF9C26A5C21E00481F92 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1891BF9A26A5C21E00481F92 /* Main.storyboard */; };
@@ -73,6 +74,7 @@
 		1884526226A88BA20098C9ED /* CartItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItemRowView.swift; sourceTree = "<group>"; };
 		1884526426A9D7760098C9ED /* FoodFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodFilterView.swift; sourceTree = "<group>"; };
 		1884526626AAD24A0098C9ED /* CartButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartButton.swift; sourceTree = "<group>"; };
+		1884526826ABEBDC0098C9ED /* NSObject+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+Extension.swift"; sourceTree = "<group>"; };
 		1891BF9126A5C21D00481F92 /* Vipher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vipher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1891BF9426A5C21D00481F92 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1891BF9626A5C21E00481F92 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 				1891BFB726A6781A00481F92 /* UICollectionView+Extension.swift */,
 				1891BFB926A67ADE00481F92 /* UIViewController+Extension.swift */,
 				181A715726A736F4005929A2 /* String+Extension.swift */,
+				1884526826ABEBDC0098C9ED /* NSObject+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -484,6 +487,7 @@
 				18E0111A26A5D03600FBB986 /* AppStorage.swift in Sources */,
 				18E0112326A5DBE400FBB986 /* Food.swift in Sources */,
 				18E0111026A5C8E400FBB986 /* NetworkManager.swift in Sources */,
+				1884526926ABEBDC0098C9ED /* NSObject+Extension.swift in Sources */,
 				1884525C26A8766C0098C9ED /* CartInteractor.swift in Sources */,
 				1884525E26A876720098C9ED /* CartRouter.swift in Sources */,
 				1891BFB126A66A8300481F92 /* FoodListRouter.swift in Sources */,

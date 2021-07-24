@@ -81,7 +81,7 @@ class BannerView : UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        self.bringSubviewToFront(pageControl)
+        invalidateLayout()
     }
     
     // MARK: - PageControl + Updates
@@ -114,7 +114,7 @@ extension BannerView : UICollectionViewDelegate,UICollectionViewDataSource,UICol
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return collectionView.frame.size
+        return CGSize(width: floor(collectionView.frame.width), height: floor(collectionView.frame.height))
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

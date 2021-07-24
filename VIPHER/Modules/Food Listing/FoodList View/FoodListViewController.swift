@@ -37,6 +37,7 @@ class FoodListViewController : BaseViewController<FoodListPresenter> {
 
         self.view.addSubview(foodView)
         self.view.addSubview(foodFilterView)
+        self.view.backgroundColor = .defaultBackground
     
         NSLayoutConstraint.activate([
             foodFilterView.topAnchor.constraint(equalTo: self.view.topAnchor),
@@ -103,6 +104,16 @@ extension FoodListViewController : FoodListDelegate {
     
     func didFoodListEndDecelerate() {
         self.delegate?.didChildScrollViewEndDecelerate(self.foodView)
+    }
+    
+    func didFoodListWillBeginDragging() {
+        self.delegate?.willChildScrollViewBeginDragging(self.foodView)
+    }
+    
+    func didFoodListWillEndDragging(withVelocity velocity: CGPoint,
+                                    targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        self.delegate?.didChildScrollViewWillEndDragging(self.foodView, withVelocity: velocity,
+                                                         targetContentOffset: targetContentOffset)
     }
 }
 
